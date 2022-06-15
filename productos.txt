@@ -22,11 +22,5 @@
 		"price": "89",
 		"thumbnail": "https://cdn0.iconfinder.com/data/icons/hairdressing-3/512/as449_14-256.png",
 		"id": 4
-	},
-	{
-		"title": "Tabla",
-		"price": "2",
-		"thumbnail": "e",
-		"id": 5
 	}
 ]

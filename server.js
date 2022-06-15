@@ -21,12 +21,36 @@ app.set( 'view engine', 'ejs' );
 app.set( 'views', __dirname + '/views' );
 
 //websockets:
+let date = new Date();
+const messages = [
+  { author: 'Juan@gmail.com', msg: 'Hola mundo!', date: date.toISOString().split('T')[0] + ' ' + date.toLocaleTimeString() },
+  { author: 'Carlos@gmail.com', msg: 'Hola mundo!', date: date.toISOString().split('T')[0] + ' ' + date.toLocaleTimeString() }
+]
+
 io.on( 'connection', ( socket ) => {
   console.log( 'Usuario conectado, ID: ' + socket.id );
 
 	const read = fs.readFileSync( './productos.txt', 'utf-8' );
 	const products = JSON.parse( read );
 	socket.emit( 'products', products );
+	socket.emit( 'messages', messages );
+
+	socket.on( 'newProduct', ( newProduct ) => {
+		const read = fs.readFileSync( './productos.txt', 'utf-8' );
+    const products = JSON.parse( read );
+    const productsId = products.map( p => p.id );
+    newProduct.id = Math.max( ...productsId ) + 1;
+
+    products.push( newProduct );
+		fs.writeFileSync( './productos.txt', JSON.stringify( products, null, '\t' ) );
+
+    io.sockets.emit( 'products', products );
+  });
+
+	socket.on( 'newMessage', ( newMessage ) => {
+		messages.push( newMessage );
+    io.sockets.emit( 'messages', messages );
+  });
 });
 
 
